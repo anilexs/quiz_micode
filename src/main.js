@@ -1,22 +1,70 @@
 import './style.css';
 import { Questions } from './questions';
-console.log(Questions);
 
 const app = document.querySelector('#app');
 
 const startButton = document.querySelector('#start');
 
-let i = 0;
+startButton.addEventListener("click", startQuiz);
 
-startButton.addEventListener("click", () => {
-  const question = document.querySelector("#question") ?? document.createElement("p");
-  question.id = "question";
-  question.innerText = Questions[i].question;
-  app.insertBefore(question, startButton);
+function startQuiz(event) {
+  event.stopPropagation();
+  let currentQuestion = 0;
+  let score = 0;
 
-  i++;
-  if(i > Questions.length -1){
-    question.remove();
-    i = 0;
+  clean();
+  displayQuestion(currentQuestion);
+
+  function clean(){
+    while(app.firstElementChild){
+      app.firstElementChild.remove();
+    }
   }
-});
+  
+  function displayQuestion(index){
+    const question = Questions[index];
+
+    if(!question){
+
+    }
+
+    const title = getTitleElement(question.question)
+    app.appendChild(title);
+    const answersDiv = createAnswers(question.answers);
+    app.appendChild(answersDiv);
+  }
+
+  function createAnswers (answers){
+    const answersDiv = document.createElement("div");
+
+    answersDiv.classList.add('answers');
+  
+    for (const answer of answers){
+      const label = getAnswerElement(answer);
+      answersDiv.appendChild(label);
+    }
+  }
+
+  return answersDiv;
+}
+
+function getTitleElement(text){
+  const title = document.createElement("h3");
+  title.innerText = text;
+  return title;
+}
+
+
+function getAnswerElement (text){
+  const label = document.createElement("label");
+  label.innerText = text;
+  const input =document.createElement("input");
+  const id = text.replaceAll(" ", "-").toLowerCase();
+  input.id = id;
+  label.htmlFor = id;
+  input.setAttribute("type", "radio");
+  input.setAttribute("name", "answer");
+  input.setAttribute("value", text);
+  label.appendChild(input);
+  return label;
+}
